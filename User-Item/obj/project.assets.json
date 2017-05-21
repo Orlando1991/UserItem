@@ -7122,16 +7122,16 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\User-Item\\Data Science.csproj",
+      "projectUniqueName": "c:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\UserItem\\User-Item\\Data Science.csproj",
       "projectName": "Data Science",
-      "projectPath": "C:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\User-Item\\Data Science.csproj",
-      "outputPath": "C:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\User-Item\\obj\\",
+      "projectPath": "c:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\UserItem\\User-Item\\Data Science.csproj",
+      "outputPath": "c:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\UserItem\\User-Item\\obj\\",
       "projectStyle": "PackageReference",
       "originalTargetFrameworks": [
         "netcoreapp1.1"
       ],
       "files": {
-        "lib/netcoreapp1.1/Data Science.dll": "C:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\User-Item\\bin\\placeholder\\netcoreapp1.1\\Data Science.dll"
+        "lib/netcoreapp1.1/Data Science.dll": "c:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\UserItem\\User-Item\\bin\\placeholder\\netcoreapp1.1\\Data Science.dll"
       },
       "frameworks": {
         "netcoreapp1.1": {
