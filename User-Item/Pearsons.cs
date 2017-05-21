@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace UserItem
 {
-    public class Pearsons
+    public class Pearsons : StrategyInterface
     {
         //if both article have a 0 rating we can exclude it. this comes in to play at part3 so n isnt higher than it should be
         List<int> excludeArticle = new List<int>();
-        public double calculate(User user1, User user2, List<int> uniqueArticles)
+        double StrategyInterface.calculate(User user1, User user2, List<int> uniqueArticles)
         {
             var distance = 0.0 ;
             var allRatings1 = user1.articleRating;

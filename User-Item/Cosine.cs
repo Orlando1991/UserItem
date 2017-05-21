@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace UserItem
 {
-    public class Cosine
+    public class Cosine : StrategyInterface
     {
-        public double calculate(User user1, User user2, List<int> uniqueArticles)
+        double StrategyInterface.calculate(User user1, User user2, List<int> uniqueArticles)
         {
             var allRatings1 = user1.articleRating;
             var allRatings2 = user2.articleRating;

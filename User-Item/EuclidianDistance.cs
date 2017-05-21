@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace UserItem
 {
 
-    public class EuclidianDistance
+    public class EuclidianDistance : StrategyInterface
     {
-        public double calculate(User user1, User user2, List<int> uniqueArticles)
+        double StrategyInterface.calculate(User user1, User user2, List<int> uniqueArticles)
         {
             var distance = 0.0 ;
             var allRatings1 = user1.articleRating;

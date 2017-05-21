@@ -10,40 +10,36 @@ namespace UserItem
         private static string FILE_PATH = "C:\\Users\\Orlando\\Documents\\HRO\\INF3B\\OP4\\Data Science\\UserItem\\User-Item\\userItem.csv";
         static Dictionary<int, User> userpref = new Dictionary<int, User>();
         static List<int> uniqueArticles = new List<int>();
-        static EuclidianDistance ed;
-        static Pearsons pe;
-        static Cosine co;
+        static StrategyInterface ed, pe, co;
+
         
         static void Main(string[] args)
         {
             readFile();
-            
-            foreach(var item in userpref)
-            {
-                Console.WriteLine("uid: " + item.Key);
-                var user = userpref[item.Key];
-                var userRatings = user.articleRating;
-                foreach(var rating in userRatings)
-                {
-                    Console.WriteLine("articleId: " + rating.Key + " rating: " + rating.Value);
-                }
-                Console.WriteLine("---------------------");
-            }
+            printUsers();
             //possible keys 1 .. 7
             var user1 = userpref[1]; //[2,6] 1,58 en 0,95
+            var amount_nearestNeighbours = 3;
+            nearestNeighbours(user1, amount_nearestNeighbours);
+            
+
+        }
+        //will return a list of size n with neirest neighbours eventually
+        private static void nearestNeighbours(User selectedUser, int amount_nearestNeighbours)
+        {
+            //loop through all the users and find the users that are most similar to selecteduser
             var user2 = userpref[7];
             ed = new EuclidianDistance();
-            var euclidian_distance = ed.calculate(user1, user2, uniqueArticles);
+            var euclidian_distance = ed.calculate(selectedUser, user2, uniqueArticles);
             Console.WriteLine("Euclidian stuff:" + euclidian_distance);
 
             pe = new Pearsons();
-            var correlation = pe.calculate(user1, user2, uniqueArticles);
+            var correlation = pe.calculate(selectedUser, user2, uniqueArticles);
             Console.WriteLine("Pearsons corr:" + correlation);
             
             co = new Cosine();
-            var cosine_similarity = co.calculate(user1, user2, uniqueArticles);
+            var cosine_similarity = co.calculate(selectedUser, user2, uniqueArticles);
             Console.WriteLine("Cosine similarity:" + cosine_similarity);
-
         }
         private static void readFile()
         {
@@ -90,6 +86,21 @@ namespace UserItem
                 var newUser = new User(userId, articleRating);
                 userpref.Add(userId, newUser);
             }            
+        }
+
+        private static void printUsers()
+        {
+            foreach(var item in userpref)
+            {
+                Console.WriteLine("uid: " + item.Key);
+                var user = userpref[item.Key];
+                var userRatings = user.articleRating;
+                foreach(var rating in userRatings)
+                {
+                    Console.WriteLine("articleId: " + rating.Key + " rating: " + rating.Value);
+                }
+                Console.WriteLine("---------------------");
+            }
         }
     }
 }
