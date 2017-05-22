@@ -10,6 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
+            //o
             "program": "${workspaceRoot}/bin/Debug/netcoreapp1.1/Data Science.dll",
             "args": [],
             "cwd": "${workspaceRoot}",
