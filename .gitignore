@@ -45,3 +45,20 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+*.dll
+
+*.dll
+
+*.pdb
+
+*.json
+
+*.json
+
+*.props
+
+# shit
+User-Item/.vscode/
+User-Item/bin/
+User-Item/obj/

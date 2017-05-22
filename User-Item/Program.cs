@@ -13,7 +13,7 @@ namespace UserItem
         static List<int> uniqueArticles = new List<int>();
         static StrategyInterface ed, pe, co;
 
-        
+
         static void Main(string[] args)
         {
             readFile();
@@ -22,9 +22,15 @@ namespace UserItem
             //possible keys 1 .. 7
             var user1 = userpref[7]; //[2,6] 1,58 en 0,95
             var amount_nearestNeighbours = 3;
+<<<<<<< Updated upstream
             
             //will return a list of size n with neirest neighbours eventually
             nearestNeighbours(user1, amount_nearestNeighbours);
+=======
+            nearestNeighbours(user1, amount_nearestNeighbours);
+
+
+>>>>>>> Stashed changes
         }
         //how to take all the similarities into consideration and have method return only one list????
         private static void nearestNeighbours(User selectedUser, int amount_nearestNeighbours)
@@ -36,6 +42,7 @@ namespace UserItem
                 Dictionary<int, double> nn_Pearson = new Dictionary<int, double>();
                 Dictionary<int, double> nn_Cosine = new Dictionary<int, double>();
 
+<<<<<<< Updated upstream
                 if(selectedUser.id != user.Key)
                 {
                     Console.WriteLine("Compare user: " + selectedUser.id + " with user: " + user.Key);
@@ -61,6 +68,15 @@ namespace UserItem
                 
             }
             
+=======
+            pe = new Pearsons();
+            var correlation = pe.calculate(selectedUser, user2, uniqueArticles);
+            Console.WriteLine("Pearsons corr:" + correlation);
+
+            co = new Cosine();
+            var cosine_similarity = co.calculate(selectedUser, user2, uniqueArticles);
+            Console.WriteLine("Cosine similarity:" + cosine_similarity);
+>>>>>>> Stashed changes
         }
 
         private static Dictionary<int, double> sortEuclidianNeighbours(int id, double euclidian_distance, Dictionary<int, double> nearestNeighbours, int amount_nearestNeighbours)
@@ -86,20 +102,20 @@ namespace UserItem
 
         private static void readFile()
         {
-            using(FileStream fs = File.OpenRead(FILE_PATH))
-            using(var reader = new StreamReader(fs))
+            using (FileStream fs = File.OpenRead(FILE_PATH))
+            using (var reader = new StreamReader(fs))
             {
-                while(!reader.EndOfStream)
+                while (!reader.EndOfStream)
                 {
                     Dictionary<int, double> articleRating = new Dictionary<int, double>();
                     var line = reader.ReadLine();
                     // index 0 = userid, index 1 = articleid, index 2= rating
                     var values = line.Split(',');
-                    
+
                     int userId = int.Parse(values[0]);
                     int articleId = int.Parse(values[1]);
                     double rating = double.Parse(values[2], CultureInfo.InvariantCulture); //wtf c#
-                    
+
                     initUniqueArticles(articleId);
                     initData(userId, articleId, rating);
                 }
@@ -108,7 +124,7 @@ namespace UserItem
 
         private static void initUniqueArticles(int articleId)
         {
-            if(!uniqueArticles.Contains(articleId))
+            if (!uniqueArticles.Contains(articleId))
             {
                 uniqueArticles.Add(articleId);
                 uniqueArticles.Sort();
@@ -118,27 +134,28 @@ namespace UserItem
         private static void initData(int userId, int articleId, double rating)
         {
             //user was already created
-            if(userpref.ContainsKey(userId))
+            if (userpref.ContainsKey(userId))
             {
                 var user = userpref[userId];
                 user.addArticle(articleId, rating);
             }
             //new user needs to be created
-            else{
-                Dictionary<int, double> articleRating = new Dictionary<int, double>{ {articleId, rating} };
+            else
+            {
+                Dictionary<int, double> articleRating = new Dictionary<int, double> { { articleId, rating } };
                 var newUser = new User(userId, articleRating);
                 userpref.Add(userId, newUser);
-            }            
+            }
         }
 
         private static void printUsers()
         {
-            foreach(var item in userpref)
+            foreach (var item in userpref)
             {
                 Console.WriteLine("uid: " + item.Key);
                 var user = userpref[item.Key];
                 var userRatings = user.articleRating;
-                foreach(var rating in userRatings)
+                foreach (var rating in userRatings)
                 {
                     Console.WriteLine("articleId: " + rating.Key + " rating: " + rating.Value);
                 }
