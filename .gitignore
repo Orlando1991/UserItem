@@ -46,6 +46,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+<<<<<<< HEAD
 *.dll
 
 *.dll
@@ -62,3 +63,6 @@ Temporary Items
 User-Item/.vscode/
 User-Item/bin/
 User-Item/obj/
+=======
+#mijn dingetjes
+>>>>>>> 1d6df40768d683b39868a22879ca382c58d4a728
