@@ -60,7 +60,6 @@ Temporary Items
 *.props
 
 # shit
-User-Item/.vscode/
 User-Item/bin/
 User-Item/obj/
 =======
