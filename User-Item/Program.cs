@@ -12,18 +12,27 @@ namespace UserItem
         static Dictionary<int, User> userpref = new Dictionary<int, User>();
         static List<int> uniqueArticles = new List<int>();
         static StrategyInterface ed, pe, co;
+        static int amount_nearestNeighbours = 3;  
 
 
         static void Main(string[] args)
         {
             readFile();
+            //make sure all the values are filled in. -1 if the data didnt have the value
+            foreach(var val in userpref){
+                var user = val.Value;
+                foreach(var article in uniqueArticles) {
+                    if(!user.articleRating.ContainsKey(article)){
+                        user.addArticle(article, 0);
+                    }
+                }
+            }
             // printUsers();
 
             //possible keys 1 .. 7
-            var user1 = userpref[4]; 
-            var amount_nearestNeighbours = 3;          
+            var user1 = userpref[7];         
             var nearest_Neighbours =  nearestNeighbours(user1);
-            predictedRatings(nearest_Neighbours, amount_nearestNeighbours);
+            // predictedRatings(nearest_Neighbours, amount_nearestNeighbours);
         }
 
         private static void predictedRatings(List<User> nearest_Neighbours, int amount_nearestNeighbours)
@@ -45,7 +54,7 @@ namespace UserItem
                 weight.Add(result);
             }
             //list that containts the articles we want the ratings from from the other users
-            List<int> articleRatings = new List<int>{101};            
+            List<int> articleRatings = new List<int>{101, 103, 106};            
             for(var i = 0; i < articleRatings.Count; i++)
             {
                 var article = articleRatings[i];
@@ -78,7 +87,7 @@ namespace UserItem
                     var euclidian_distance = ed.calculate(selectedUser, user2, uniqueArticles);
                     user2.euclidean_distance = euclidian_distance;
                     nn_Euclidian.Add(user2);
-                    Console.WriteLine("Euclidian stuff: " + euclidian_distance);
+                    Console.WriteLine("Euclidian stuff: " +  euclidian_distance);
 
                     pe = new Pearsons();
                     var correlation = pe.calculate(selectedUser, user2, uniqueArticles);
@@ -99,17 +108,17 @@ namespace UserItem
                 }      
             }
             //maybe print the first 3 of this stuff
-            List<User> nn_Euclidian_Sorted = nn_Euclidian.OrderBy(x => x.euclidean_distance).ToList();
+            List<User> nn_Euclidian_Sorted = nn_Euclidian.OrderByDescending(x => x.euclidean_distance).ToList();
             List<User> nn_Pearson_Sorted = nn_Pearson.OrderByDescending(x => x.pearson_correlation).ToList();
             List<User> nn_Cosine_Sorted = nn_Cosine.OrderByDescending(x => x.cosine).ToList();
 
-            for(var i =0; i < nn_Euclidian_Sorted.Count; i++)
+            for(var i =0; i < amount_nearestNeighbours; i++)
             {
-                Console.WriteLine("Euclidian nn: " + nn_Euclidian_Sorted[i].id);
+                Console.WriteLine("Nearest {0}", i + 1 + "\n----------------");                
+                Console.WriteLine("Euclidian nn: "+ nn_Euclidian_Sorted[i].id);
                 Console.WriteLine("Pearson nn: " + nn_Pearson_Sorted[i].id);
-                Console.WriteLine("consine nn: " + nn_Cosine_Sorted[i].id);
+                Console.WriteLine("consine nn: " + nn_Cosine_Sorted[i].id + "\n");
             }
-
             return nn_Pearson_Sorted;
         }
         private static void readFile()

@@ -11,29 +11,18 @@ namespace UserItem
             var distance = 0.0 ;
             var allRatings1 = user1.articleRating;
             var allRatings2 = user2.articleRating;
-            foreach(var article in uniqueArticles)
+            foreach(var article in allRatings1)
             {
-                double rating1, rating2;
-                //check if the userratings have the key
-                if(allRatings1.ContainsKey(article))
+                var key = article.Key;
+                if(allRatings1[key] == 0 || allRatings2[key] == 0)
                 {
-                    rating1 = allRatings1[article];
-                } else {
-                    rating1 = 0;
+                    continue;
                 }
-                if(allRatings2.ContainsKey(article))
-                {
-                    rating2 = allRatings2[article];
-                } else {
-                    rating2 = 0;
-                }
-                var i = rating1 - rating2;
-                var squared = Math.Pow(i, 2);
-                //you need to square the value before summing everything up
-                distance += squared;
+                var i = allRatings1[key] - allRatings2[key];
+                distance += Math.Pow(i, 2);
             }
-
-            return Math.Sqrt(distance);
+            
+            return 1 / (1 + Math.Sqrt(distance)); //1 / 1+ euclidian distance is similarity formula
         }
     }
 }
