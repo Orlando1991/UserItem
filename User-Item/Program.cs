@@ -13,6 +13,7 @@ namespace UserItem
         static List<int> uniqueArticles = new List<int>();
         static StrategyInterface ed, pe, co;
         static int amount_nearestNeighbours = 3;  
+        static double simTreshold = 0.35;
 
 
         static void Main(string[] args)
@@ -27,79 +28,95 @@ namespace UserItem
                     }
                 }
             }
-            // printUsers();
+            printUsers();
 
             //possible keys 1 .. 7
-            var user1 = userpref[7];         
-            var nearest_Neighbours =  nearestNeighbours(user1);
-            // predictedRatings(nearest_Neighbours, amount_nearestNeighbours);
+            var user1 = userpref[7];    
+            var emptyRatings = user1.articleRating.Where(x => x.Value == 0).Select(y => y.Key).ToList();     
+            var nearest_Neighbours =  nearestNeighbours(user1, emptyRatings, simTreshold, amount_nearestNeighbours);
+            foreach(var item in emptyRatings)
+            {
+                predictedRatings(nearest_Neighbours, amount_nearestNeighbours, item);
+            }
         }
 
-        private static void predictedRatings(List<User> nearest_Neighbours, int amount_nearestNeighbours)
+        private static void predictedRatings(List<Tuple<double, User>> neighbours, int amount_nearestNeighbours, int articleId)
         {
-            List<double> pearson_values = new List<double>();
-            List<double> weight = new List<double>();
-            double sum = 0;
-            for(var i = 0; i< amount_nearestNeighbours; i++)
+            var sum = 0.0;
+            var weightedAvg = 0.0;
+            for(var i =0; i < amount_nearestNeighbours; i++)
             {
-                var user = nearest_Neighbours[i];
-                var pearson_correlation = user.pearson_correlation;
-                pearson_values.Add(pearson_correlation);
-                sum += pearson_correlation;
-            }
-
-            foreach(var value in pearson_values)
-            {
-                var result = value/sum;
-                weight.Add(result);
-            }
-            //list that containts the articles we want the ratings from from the other users
-            List<int> articleRatings = new List<int>{101, 103, 106};            
-            for(var i = 0; i < articleRatings.Count; i++)
-            {
-                var article = articleRatings[i];
-                var predictedRating = 0.0;
-                for(var j = 0; j < amount_nearestNeighbours; j++)
+                var similarity = neighbours[i].Item1;
+                var user = neighbours[i].Item2;
+                if(user.articleRating[articleId] == 0)
                 {
-                    var currentNeighbour = nearest_Neighbours[j];
-                    var userRating  = currentNeighbour.articleRating[article];
-                    var weighted_rating = weight[j] * userRating;
-                    predictedRating += weighted_rating;
-                } 
-                Console.WriteLine("Predicted rating for article : " + article + " is: " + predictedRating);                         
+                    continue;
+                }
+                weightedAvg += similarity * user.articleRating[articleId];
+                sum += similarity;
             }
+            Console.WriteLine("Predicted Rating: {0}", weightedAvg/sum);
+            
         } 
-        private static List<User> nearestNeighbours(User selectedUser)
+        private static List<Tuple<double, User>> nearestNeighbours(User selectedUser,  List<int> emptyRatings, double smt, int amount)
         {
-            List<User> nn_Euclidian = new List<User>();
-            List<User> nn_Pearson = new List<User>();
-            List<User> nn_Cosine = new List<User>();
+            List<Tuple<double, User>> nn_Euclidian = new List<Tuple<double, User>>();
+            var nn_Pearson = new List<Tuple<double, User>>();
+            List<Tuple<double, User>> nn_Cosine = new List<Tuple<double, User>>();
             //loop through all the users and find the users that are most similar to selecteduser
             foreach(var user in userpref)
             {
+                var user2 = userpref[user.Key];
                 if(selectedUser.id != user.Key)
                 {
+
+                    var difference = 0;
+                    foreach (var rating in emptyRatings)
+                    {
+                        if (user2.articleRating[rating] != 0) 
+                        {
+                            difference++;
+                        }
+                    }
+
+                    if (difference <= 0) {
+                        continue;
+                    }
+                    //TODO refactor this mess, only pearson has treshold atm
                     Console.WriteLine("Compare user: " + selectedUser.id + " with user: " + user.Key);
                     Console.WriteLine("---------------------");
-                    var user2 = userpref[user.Key];
-
+                    
                     ed = new EuclidianDistance();
                     var euclidian_distance = ed.calculate(selectedUser, user2, uniqueArticles);
                     user2.euclidean_distance = euclidian_distance;
-                    nn_Euclidian.Add(user2);
+                    nn_Euclidian.Add(Tuple.Create(euclidian_distance, user2));
                     Console.WriteLine("Euclidian stuff: " +  euclidian_distance);
 
                     pe = new Pearsons();
                     var correlation = pe.calculate(selectedUser, user2, uniqueArticles);
-                    user2.pearson_correlation = correlation;
-                    nn_Pearson.Add(user2);
-
+                    if (correlation >= smt)
+                    {
+                        var neighbour = Tuple.Create(correlation, user2);
+                        if (nn_Pearson.Count < amount) {
+                            nn_Pearson.Add(neighbour);
+                            if (nn_Pearson.Count() == amount) {
+                                smt = nn_Pearson.Min(x => x.Item1);
+                            }
+                        }
+                        else
+                        {
+                            nn_Pearson.Add(neighbour);
+                            var lowestSimilarityUser = nn_Pearson.OrderBy(x => x.Item1).First();
+                            nn_Pearson.Remove(lowestSimilarityUser);
+                            smt = nn_Pearson.OrderBy(x => x.Item1).First().Item1;
+                        }
+                    }
                     Console.WriteLine("Pearsons corr: " + correlation);
                 
                     co = new Cosine();
                     var cosine_similarity = co.calculate(selectedUser, user2, uniqueArticles);
                     user2.cosine = cosine_similarity;
-                    nn_Cosine.Add(user2);
+                    nn_Cosine.Add(Tuple.Create(cosine_similarity, user2));
 
                     Console.WriteLine("Cosine similarity: " + cosine_similarity + "\n");
                 } else
@@ -108,16 +125,16 @@ namespace UserItem
                 }      
             }
             //maybe print the first 3 of this stuff
-            List<User> nn_Euclidian_Sorted = nn_Euclidian.OrderByDescending(x => x.euclidean_distance).ToList();
-            List<User> nn_Pearson_Sorted = nn_Pearson.OrderByDescending(x => x.pearson_correlation).ToList();
-            List<User> nn_Cosine_Sorted = nn_Cosine.OrderByDescending(x => x.cosine).ToList();
+            List<Tuple<double, User>> nn_Euclidian_Sorted = nn_Euclidian.OrderByDescending(x => x.Item1).ToList();
+            List<Tuple<double, User>> nn_Pearson_Sorted = nn_Pearson.OrderByDescending(x => x.Item1).ToList();
+            List<Tuple<double, User>> nn_Cosine_Sorted = nn_Cosine.OrderByDescending(x => x.Item1).ToList();
 
             for(var i =0; i < amount_nearestNeighbours; i++)
             {
                 Console.WriteLine("Nearest {0}", i + 1 + "\n----------------");                
-                Console.WriteLine("Euclidian nn: "+ nn_Euclidian_Sorted[i].id);
-                Console.WriteLine("Pearson nn: " + nn_Pearson_Sorted[i].id);
-                Console.WriteLine("consine nn: " + nn_Cosine_Sorted[i].id + "\n");
+                Console.WriteLine("Euclidian nn: "+ nn_Euclidian_Sorted[i].Item2.id);
+                Console.WriteLine("Pearson nn: " + nn_Pearson_Sorted[i].Item2.id);
+                Console.WriteLine("consine nn: " + nn_Cosine_Sorted[i].Item2.id + "\n");
             }
             return nn_Pearson_Sorted;
         }
