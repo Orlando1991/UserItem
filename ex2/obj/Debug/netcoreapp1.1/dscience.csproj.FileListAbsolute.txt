@@ -1,0 +1,16 @@
+c:\Users\Rene\Desktop\datascience1\bin\Debug\netcoreapp1.1\dscience.deps.json
+c:\Users\Rene\Desktop\datascience1\bin\Debug\netcoreapp1.1\dscience.runtimeconfig.json
+c:\Users\Rene\Desktop\datascience1\bin\Debug\netcoreapp1.1\dscience.runtimeconfig.dev.json
+c:\Users\Rene\Desktop\datascience1\obj\Debug\netcoreapp1.1\dscience.AssemblyInfo.cs
+c:\Users\Rene\Desktop\datascience1\bin\Debug\netcoreapp1.1\dscience.dll
+c:\Users\Rene\Desktop\datascience1\bin\Debug\netcoreapp1.1\dscience.pdb
+c:\Users\Rene\Desktop\datascience1\obj\Debug\netcoreapp1.1\dscience.dll
+c:\Users\Rene\Desktop\datascience1\obj\Debug\netcoreapp1.1\dscience.pdb
+C:\Users\Rene\Desktop\datascience1\ex2\bin\Debug\netcoreapp1.1\dscience.deps.json
+C:\Users\Rene\Desktop\datascience1\ex2\bin\Debug\netcoreapp1.1\dscience.runtimeconfig.json
+C:\Users\Rene\Desktop\datascience1\ex2\bin\Debug\netcoreapp1.1\dscience.runtimeconfig.dev.json
+C:\Users\Rene\Desktop\datascience1\ex2\bin\Debug\netcoreapp1.1\dscience.dll
+C:\Users\Rene\Desktop\datascience1\ex2\bin\Debug\netcoreapp1.1\dscience.pdb
+C:\Users\Rene\Desktop\datascience1\ex2\obj\Debug\netcoreapp1.1\dscience.AssemblyInfo.cs
+C:\Users\Rene\Desktop\datascience1\ex2\obj\Debug\netcoreapp1.1\dscience.dll
+C:\Users\Rene\Desktop\datascience1\ex2\obj\Debug\netcoreapp1.1\dscience.pdb
