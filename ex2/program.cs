@@ -55,16 +55,14 @@ namespace App
                 }
             }
         }
-        private static void initUniqueArticles(int articleId)
-        {
+        private static void initUniqueArticles(int articleId){
             if(!uniqueArticles.Contains(articleId))
             {
                 uniqueArticles.Add(articleId);
                 uniqueArticles.Sort();
             }
         }
-        private static void initData(int userId, int articleId, double rating)
-        {
+        private static void initData(int userId, int articleId, double rating){
             //user was already created
             if(userpref.ContainsKey(userId))
             {
@@ -78,8 +76,7 @@ namespace App
                 userpref.Add(userId, newUser);
             }            
         }
-        private static void printUsers()
-        {
+        private static void printUsers(){
             foreach(var item in userpref)
             {
                 Console.WriteLine("uid: " + item.Key);
@@ -130,20 +127,27 @@ namespace App
         }
         private static void setupDeviationMatrix(){
             Dictionary<int,double> tempDeviationHolder = new Dictionary<int,double>();
+
             for(var i = 0; i< articleMatrix.Count;i++){
                 int articleListCounter = 0;
                 Dictionary<int,double> articleList1 = articleMatrix.ElementAt(i).Value;
-                articleListCounter = articleMatrix.ElementAt(i).Key;
+                articleListCounter = articleMatrix.ElementAt(i).Key;        // save the key for replacement
                 //Console.WriteLine("article 1: "+articleMatrix.ElementAt(i).Key);
-                Dictionary<int,double> articleList2;
-                if(i == articleMatrix.Count-1){
+                Dictionary<int,double> articleList2;    // our article list we are matching against
+                double articleListMatchCounter = 0.0;
+
+                if(i == articleMatrix.Count-1){         // if this is our last one, compare it with the first one
                     articleList2 = articleMatrix.ElementAt(0).Value;
+                    articleListMatchCounter = articleMatrix.ElementAt(0).Key;
                     //Console.WriteLine("article 2: "+articleMatrix.ElementAt(0).Key);
                 }else{
-                    articleList2 = articleMatrix.ElementAt(i+1).Value;
+                    articleList2 = articleMatrix.ElementAt(i+1).Value;  // if not the last one, compare with the next one
+                    articleListMatchCounter = articleMatrix.ElementAt(i+1).Key;
                     //Console.WriteLine("article 2: "+articleMatrix.ElementAt(i+1).Key);
                 }
-                double tempRating = 0;
+
+                // calculate deviation based on S with S+1
+                double tempRating = 0; 
                 double userCount = 0;
                 for(var j = 0; j< articleList1.Count;j++){
                     if(articleList1.ElementAt(j).Value != 0 && articleList2.ElementAt(j).Value != 0){
@@ -151,19 +155,46 @@ namespace App
                         userCount++;
                     }
                 }
-                tempRating  = tempRating/userCount;
+                tempRating  = tempRating/userCount; // devide our 'sum' by x 
+
                 //Console.WriteLine("rating: "+tempRating);  
                 //Console.WriteLine("id: "+i);
+                Console.WriteLine(i+" _ "+articleListCounter +" _VS_ " +articleListMatchCounter+ " _ "+tempRating);
+                // places a key and value in or temp deviation holder
                 tempDeviationHolder.Add(articleListCounter,tempRating);
-                deviationMatrix[articleMatrix.ElementAt(i).Key][i] = 0.0;
 
+                //deviationMatrix[articleListCounter][i] = tempRating; //-> stairway
             }
-            deviationMatrix[tempDeviationHolder.ElementAt(0).Key][1] = tempDeviationHolder.ElementAt(0).Value;
-            deviationMatrix[tempDeviationHolder.ElementAt(1).Key][0] = tempDeviationHolder.ElementAt(0).Value;
+            for(var i = 0; i <tempDeviationHolder.Count();i++){
+                var subCheat   = new int []{0,1,2,3,4,5,6};
+                var subCounter = subCheat[i];
+
+                for(var j = 0; j < tempDeviationHolder.Count();j++){
+                    if(j == i){
+                        deviationMatrix[tempDeviationHolder.ElementAt(i).Key][j] = 0.0; //-> stairway   
+                    }else{
+                        if(subCounter == tempDeviationHolder.Count- 1){
+                            subCounter = 0;
+                            deviationMatrix[tempDeviationHolder.ElementAt(i).Key][j] = tempDeviationHolder.ElementAt(subCounter).Value; 
+                        }else{
+                            deviationMatrix[tempDeviationHolder.ElementAt(i).Key][j] = tempDeviationHolder.ElementAt(subCounter).Value; 
+                            subCounter = subCounter+1;
+                        }
+                    }
+                }
+            }
+            /* 
+            // TRY TO FILL MATRIX
+            for(int i = 0; i<tempDeviationHolder.Count(); i++){
+                for(int j = 0; j < i; j++){
+                    deviationMatrix[tempDeviationHolder.ElementAt(i).Key][j] = tempDeviationHolder.ElementAt(i).Value;
+                }
+            }
+            */
+            //deviationMatrix[tempDeviationHolder.ElementAt(0).Key][1] = tempDeviationHolder.ElementAt(0).Value;
+            //deviationMatrix[tempDeviationHolder.ElementAt(1).Key][0] = tempDeviationHolder.ElementAt(0).Value;
             // uhhhhhhhhhhhhhhhhhhhhhhhhhgggg hoe the fuuuuuuuuuuuuuuuuuuuuuuuck ga ik dit loopen
             
-
-
         }
         private static void printDeviationMatrix(){
             Console.WriteLine("==Deviation Matrix==");
